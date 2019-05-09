@@ -67,7 +67,7 @@ class GameViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
         
-        
+        //MARK:- SCNAction
         let wait : SCNAction = SCNAction.wait(duration: 3)
         
         let runAfter : SCNAction = SCNAction.run { _ in
@@ -97,7 +97,7 @@ class GameViewController: UIViewController {
                 print("Found ball")
                 
                 ballNode = node
-                
+                //MARK:- SCNPhysicsBody
                 ballNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: SCNPhysicsShape(node: node, options: nil))
                 
                 ballNode.physicsBody?.isAffectedByGravity = true
@@ -141,6 +141,7 @@ class GameViewController: UIViewController {
             // get its material
             let material = result.node.geometry!.firstMaterial!
             
+            //MARK:- SCNTransaction
             // highlight it
             SCNTransaction.begin()
             SCNTransaction.animationDuration = 0.5
@@ -161,8 +162,8 @@ class GameViewController: UIViewController {
             
             if result.node.name == "ball"{
                 
-            
-                ballNode.physicsBody?.applyForce(SCNVector3(0, 10, 0), asImpulse: true)
+                //MARK:- PhysicsBody.applyforce
+                ballNode.physicsBody?.applyForce(SCNVector3(0, 10, 0), asImpulse: false)
                 
             }
             
