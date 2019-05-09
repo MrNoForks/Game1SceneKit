@@ -102,6 +102,13 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
         
         print("Contact happened")
         
+        if(contact.nodeA.physicsBody?.contactTestBitMask == BodyType.box.rawValue && contact.nodeB.physicsBody?.contactTestBitMask == BodyType.ball.rawValue){
+            print("Node A is a box and Node B is a ball")
+        }
+        else if (contact.nodeA.physicsBody?.contactTestBitMask == BodyType.ball.rawValue && contact.nodeB.physicsBody?.contactTestBitMask == BodyType.box.rawValue){
+             print("Node A is a ball and Node B is a box")
+        }
+        
     }
     
     func addSceneContent(){
