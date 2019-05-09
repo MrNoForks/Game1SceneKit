@@ -68,7 +68,17 @@ class GameViewController: UIViewController {
         scnView.addGestureRecognizer(tapGesture)
         
         
+        let wait : SCNAction = SCNAction.wait(duration: 3)
         
+        let runAfter : SCNAction = SCNAction.run { _ in
+            
+            self.addSceneContent()
+            
+        }
+        
+        let seq : SCNAction = SCNAction.sequence([wait,runAfter])
+        
+        scnView.scene!.rootNode.runAction(seq)
 
     }
     
@@ -116,12 +126,13 @@ class GameViewController: UIViewController {
     
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // retrieve the SCNView
-        let scnView = self.view as! SCNView
+//        // retrieve the SCNView
+//        let scnView = self.view as! SCNView
         
         // check what nodes are tapped
         let p = gestureRecognize.location(in: scnView)
         let hitResults = scnView.hitTest(p, options: [:])
+        // in AR you can have option to detect existing plane if it is vertical or horizontal
         // check that we clicked on at least one object
         if hitResults.count > 0 {
             // retrieved the first clicked object
@@ -147,6 +158,14 @@ class GameViewController: UIViewController {
             material.emission.contents = UIColor.red
             
             SCNTransaction.commit()
+            
+            if result.node.name == "ball"{
+                
+            
+                ballNode.physicsBody?.applyForce(SCNVector3(0, 10, 0), asImpulse: true)
+                
+            }
+            
         }
     }
     
