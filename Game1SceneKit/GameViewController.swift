@@ -9,6 +9,7 @@
 import UIKit
 import QuartzCore
 import SceneKit
+import ARKit
 
 enum BodyType : Int{
     // Powers of 2
@@ -20,13 +21,13 @@ enum BodyType : Int{
 
 
 
-class GameViewController: UIViewController , SCNPhysicsContactDelegate{
+class GameViewController: UIViewController , SCNPhysicsContactDelegate {
 
     var ballNode : SCNNode!
     
     var boxNode : SCNNode!
     
-    var scnView : SCNView!
+    var scnView : ARSCNView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +60,7 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
 
         
         // retrieve the SCNView
-        scnView = self.view as! SCNView
+        scnView = self.view as? ARSCNView
         
         // set the scene to the view
         scnView.scene = scene
@@ -68,16 +69,16 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
         scnView.debugOptions = .showPhysicsShapes
         
         // this will handle contact notification
-        scnView.scene?.physicsWorld.contactDelegate = self
+        scnView.scene.physicsWorld.contactDelegate = self
         
         // allows the user to manipulate the camera
-        scnView.allowsCameraControl = true
+        //scnView.allowsCameraControl = true
         
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
         
         // configure the view
-        scnView.backgroundColor = UIColor.black
+       // scnView.backgroundColor = UIColor.black
         
         // add a tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
@@ -94,8 +95,18 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
         
         let seq : SCNAction = SCNAction.sequence([wait,runAfter])
         
-        scnView.scene!.rootNode.runAction(seq)
+        scnView.scene.rootNode.runAction(seq)
 
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let configuration = ARWorldTrackingConfiguration()
+        scnView.session.run(configuration)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        scnView.session.pause()
     }
     
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
@@ -113,13 +124,13 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
     
     func addSceneContent(){
         // retrieve the ship node
-        let ship = scnView.scene!.rootNode.childNode(withName: "DummyNode", recursively: false)!
+        let ship = scnView.scene.rootNode.childNode(withName: "DummyNode", recursively: false)!
         
         // animate the 3d object
         ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
         
         // enumerating ChildNodes
-        scnView.scene?.rootNode.enumerateChildNodes({ (node, _) in
+        scnView.scene.rootNode.enumerateChildNodes({ (node, _) in
             
             if (node.name == "ball"){
                 
