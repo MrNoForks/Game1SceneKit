@@ -5,13 +5,17 @@
 //  Created by Boppo on 09/05/19.
 //  Copyright © 2019 Boppo. All rights reserved.
 //
-
+//https://www.pluralsight.com/blog/film-games/understanding-different-light-types
 import UIKit
 import QuartzCore
 import SceneKit
 
 class GameViewController: UIViewController {
 
+    var ballNode : SCNNode!
+    
+    var boxNode : SCNNode!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -65,8 +69,39 @@ class GameViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
         
-        
-        
+        // enumerating ChildNodes
+        scnView.scene?.rootNode.enumerateChildNodes({ (node, _) in
+            
+            if (node.name == "ball"){
+                
+                print("Found ball")
+                
+                ballNode = node
+                
+                ballNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: SCNPhysicsShape(node: node, options: nil))
+                
+                ballNode.physicsBody?.isAffectedByGravity = true
+                
+                ballNode.physicsBody?.restitution = 1
+            }
+                
+            else if (node.name == "box"){
+                
+                print("Found box")
+                
+                boxNode = node
+                
+                let boxGeometry = boxNode.geometry
+                
+                let boxShape = SCNPhysicsShape(geometry: boxGeometry!, options: nil)
+                
+                boxNode.physicsBody = SCNPhysicsBody(type: .static, shape: boxShape)
+                
+                boxNode.physicsBody?.restitution = 1
+                
+                
+            }
+        })
     }
     
     @objc
