@@ -16,6 +16,8 @@ class GameViewController: UIViewController {
     
     var boxNode : SCNNode!
     
+    var scnView : SCNView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -44,14 +46,10 @@ class GameViewController: UIViewController {
         ambientLightNode.light!.color = UIColor.darkGray
         scene.rootNode.addChildNode(ambientLightNode)
         
-        // retrieve the ship node
-        let ship = scene.rootNode.childNode(withName: "DummyNode", recursively: false)!
-        
-        // animate the 3d object
-        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
+
         
         // retrieve the SCNView
-        let scnView = self.view as! SCNView
+        scnView = self.view as! SCNView
         
         // set the scene to the view
         scnView.scene = scene
@@ -68,6 +66,18 @@ class GameViewController: UIViewController {
         // add a tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
+        
+        
+        
+
+    }
+    
+    func addSceneContent(){
+        // retrieve the ship node
+        let ship = scnView.scene!.rootNode.childNode(withName: "DummyNode", recursively: false)!
+        
+        // animate the 3d object
+        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
         
         // enumerating ChildNodes
         scnView.scene?.rootNode.enumerateChildNodes({ (node, _) in
