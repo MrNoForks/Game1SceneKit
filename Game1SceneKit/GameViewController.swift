@@ -10,7 +10,17 @@ import UIKit
 import QuartzCore
 import SceneKit
 
-class GameViewController: UIViewController {
+enum BodyType : Int{
+    // Powers of 2
+    case box = 1
+    case ball = 2
+    case donut = 4
+    case pyramid = 8
+}
+
+
+
+class GameViewController: UIViewController , SCNPhysicsContactDelegate{
 
     var ballNode : SCNNode!
     
@@ -53,6 +63,12 @@ class GameViewController: UIViewController {
         
         // set the scene to the view
         scnView.scene = scene
+       
+        //debugOptions
+        scnView.debugOptions = .showPhysicsShapes
+        
+        // this will handle contact notification
+        scnView.scene?.physicsWorld.contactDelegate = self
         
         // allows the user to manipulate the camera
         scnView.allowsCameraControl = true
@@ -82,6 +98,12 @@ class GameViewController: UIViewController {
 
     }
     
+    func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
+        
+        print("Contact happened")
+        
+    }
+    
     func addSceneContent(){
         // retrieve the ship node
         let ship = scnView.scene!.rootNode.childNode(withName: "DummyNode", recursively: false)!
@@ -103,6 +125,12 @@ class GameViewController: UIViewController {
                 ballNode.physicsBody?.isAffectedByGravity = true
                 
                 ballNode.physicsBody?.restitution = 1
+                
+                ballNode.physicsBody?.categoryBitMask = BodyType.ball.rawValue
+                
+                ballNode.physicsBody?.collisionBitMask = BodyType.box.rawValue
+                
+                ballNode.physicsBody?.contactTestBitMask = BodyType.box.rawValue
             }
                 
             else if (node.name == "box"){
@@ -119,6 +147,20 @@ class GameViewController: UIViewController {
                 
                 boxNode.physicsBody?.restitution = 1
                 
+                boxNode.physicsBody?.categoryBitMask = BodyType.box.rawValue
+                
+                // What you can collide with
+                boxNode.physicsBody?.collisionBitMask = BodyType.ball.rawValue
+                // this means ball cant go right through box which happens kinda by default but now we are specifally saying we want this things to collide with eachother
+                
+                //MARK:- Collision with multiple things
+                /*
+                boxNode.physicsBody?.collisionBitMask = BodyType.ball.rawValue | BodyType.pyramid.rawValue
+                // To make  boxNode collide with different object we put | symbol
+                 */
+                // This means we actually care about collision of this 2 things
+                boxNode.physicsBody?.contactTestBitMask = BodyType.ball.rawValue
+                // If we dont care about we dont set it at all
                 
             }
         })
